@@ -67,6 +67,7 @@ const i18n = {
     reminderNeedEmail: "Add an email so we know where to send the reminder.",
     reminderSet: (time: string) => `Reminder scheduled for ${time} (mock email).`,
     breakdownFailed: "Unable to calculate the stage breakdown right now.",
+    signupFailed: "Unable to create your account right now.",
     loginPlaceholder:
       "Login flow can be connected next. Please continue with sign up for now.",
   },
@@ -333,6 +334,31 @@ export default function HomePage() {
     }
   };
 
+  const signUpAccount = async () => {
+    const response = await fetch(apiUrl("/api/auth/signup"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fullName: form.fullName.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      }),
+    });
+
+    if (!response.ok) {
+      let message: string = i18n.status.signupFailed;
+      try {
+        const data = (await response.json()) as { message?: string; error?: string };
+        message = data.message || data.error || message;
+      } catch {
+        // Keep default message if response body isn't JSON.
+      }
+      throw new Error(message);
+    }
+  };
+
   const loadGoalBreakdown = async () => {
     setIsBreakdownLoading(true);
     try {
@@ -379,7 +405,19 @@ export default function HomePage() {
 
   const handleSignUp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await goToStep(1, "signup_completed");
+    setIsSaving(true);
+    setStatusMessage("");
+    try {
+      await signUpAccount();
+      await saveProgress("signup_completed", form);
+      setStep(1);
+    } catch (error) {
+      setStatusMessage(
+        error instanceof Error ? error.message : i18n.status.signupFailed,
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleGoalContinue = async () => {
