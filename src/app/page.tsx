@@ -49,6 +49,10 @@ type GoalBreakdownResponse = {
 
 const STORAGE_KEY = "goal-getter-onboarding-v1";
 const TOTAL_STEPS = 6;
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "";
+const apiUrl = (path: string) =>
+  API_BASE_URL ? new URL(path, API_BASE_URL).toString() : path;
 
 const i18n = {
   appHeader: "Road to 1st step of success (3 mins)",
@@ -259,7 +263,7 @@ export default function HomePage() {
       setPaymentStatus("paid");
       setStep(5);
       setStatusMessage(i18n.status.paymentSuccess);
-      void fetch("/api/onboarding", {
+      void fetch(apiUrl("/api/onboarding"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -317,7 +321,7 @@ export default function HomePage() {
 
   const saveProgress = async (stage: string, payload: Record<string, unknown>) => {
     try {
-      await fetch("/api/onboarding", {
+      await fetch(apiUrl("/api/onboarding"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -335,7 +339,7 @@ export default function HomePage() {
   const loadGoalBreakdown = async () => {
     setIsBreakdownLoading(true);
     try {
-      const response = await fetch("/api/goal-breakdown", {
+      const response = await fetch(apiUrl("/api/goal-breakdown"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -452,7 +456,7 @@ export default function HomePage() {
     setIsCheckingOut(plan);
     try {
       await saveProgress("checkout_started", { ...form, plan });
-      const response = await fetch("/api/create-checkout-session", {
+      const response = await fetch(apiUrl("/api/create-checkout-session"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

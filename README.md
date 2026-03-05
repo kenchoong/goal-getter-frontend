@@ -16,9 +16,11 @@ npm install
 cp .env.example .env.local
 ```
 
-3. Put your Stripe test secret key into `.env.local`:
+3. Set your env values in `.env.local`:
 
 ```bash
+NEXT_PUBLIC_APP_URL=http://localhost:4331
+NEXT_PUBLIC_API_URL=http://localhost:3000
 STRIPE_SECRET_KEY=sk_test_...
 ```
 
@@ -29,6 +31,9 @@ npm run dev
 ```
 
 The app runs at [http://localhost:4331](http://localhost:4331).
+
+`NEXT_PUBLIC_APP_URL` is your frontend app URL (used for Stripe checkout redirect
+URLs). `NEXT_PUBLIC_API_URL` is the backend API base URL for client requests.
 
 ## Included Stripe Flow
 
