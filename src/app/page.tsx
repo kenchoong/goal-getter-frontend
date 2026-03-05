@@ -49,10 +49,7 @@ type GoalBreakdownResponse = {
 
 const STORAGE_KEY = "goal-getter-onboarding-v1";
 const TOTAL_STEPS = 6;
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "";
-const apiUrl = (path: string) =>
-  API_BASE_URL ? new URL(path, API_BASE_URL).toString() : path;
+const apiUrl = (path: string) => path;
 
 const i18n = {
   appHeader: "Road to 1st step of success (3 mins)",

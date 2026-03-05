@@ -1,14 +1,24 @@
 import { NextResponse } from "next/server";
+import { proxyJsonPost } from "@/lib/backend-api";
 import { getStripeClient } from "@/lib/stripe";
 
 export async function POST(request: Request) {
   try {
-    const stripe = getStripeClient();
-    const origin =
-      process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
     const body = (await request.json().catch(() => ({}))) as {
       plan?: "monthly" | "lifetime";
     };
+    const proxiedResponse = await proxyJsonPost(
+      "/api/create-checkout-session",
+      request.url,
+      body,
+    );
+    if (proxiedResponse) {
+      return proxiedResponse;
+    }
+
+    const stripe = getStripeClient();
+    const origin =
+      process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
 
     const plan = body.plan === "lifetime" ? "lifetime" : "monthly";
     const isMonthly = plan === "monthly";

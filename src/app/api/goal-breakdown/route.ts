@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { proxyJsonPost } from "@/lib/backend-api";
 
 type MoneyRow = {
   name?: string;
@@ -24,6 +25,14 @@ const sumRows = (rows: MoneyRow[] | undefined) =>
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as GoalBreakdownRequest;
+    const proxiedResponse = await proxyJsonPost(
+      "/api/goal-breakdown",
+      request.url,
+      body,
+    );
+    if (proxiedResponse) {
+      return proxiedResponse;
+    }
 
     const endGoalAmount = parseAmount(body.endGoalAmount);
     const shortTermDebt = parseAmount(body.shortTermDebt);

@@ -20,7 +20,7 @@ cp .env.example .env.local
 
 ```bash
 NEXT_PUBLIC_APP_URL=http://localhost:4331
-NEXT_PUBLIC_API_URL=http://localhost:3000
+API_URL=http://localhost:3000
 STRIPE_SECRET_KEY=sk_test_...
 ```
 
@@ -33,7 +33,9 @@ npm run dev
 The app runs at [http://localhost:4331](http://localhost:4331).
 
 `NEXT_PUBLIC_APP_URL` is your frontend app URL (used for Stripe checkout redirect
-URLs). `NEXT_PUBLIC_API_URL` is the backend API base URL for client requests.
+URLs). `API_URL` is the backend API base URL used by Next.js route handlers.
+Client calls go to `/api/*` on this frontend and are proxied server-side to
+`API_URL` when configured.
 
 ## Included Stripe Flow
 

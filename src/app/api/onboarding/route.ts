@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { proxyJsonPost } from "@/lib/backend-api";
 
 type OnboardingPayload = {
   stage?: string;
@@ -8,6 +9,14 @@ type OnboardingPayload = {
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as OnboardingPayload;
+    const proxiedResponse = await proxyJsonPost(
+      "/api/onboarding",
+      request.url,
+      body,
+    );
+    if (proxiedResponse) {
+      return proxiedResponse;
+    }
 
     return NextResponse.json({
       ok: true,
